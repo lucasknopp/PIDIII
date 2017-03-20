@@ -1,0 +1,53 @@
+* {font-family: Arial;}
+body {
+    margin: 0;
+    padding: 0;
+}
+h1.TituloPagina {
+    text-align: center;
+}
+form.FormCadastro {
+    max-width: 320px;
+    width: 100%;
+    margin: 10px auto;
+}
+form.FormCadastro input[type="text"], form.FormCadastro input[type="password"], form.FormCadastro input[type="date"], form.FormCadastro input[type="email"] {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0 10px;
+    height: 40px;
+    font-size: 14px;
+    margin: 5px 0;
+    border-radius: 5px;
+    border:1px solid #ccc;
+}
+
+form.FormCadastro section.Sexo {
+    margin: 10px 0;
+    text-align: center;
+}
+
+form.FormCadastro section.Erro {
+    color:#990000;
+    padding: 0px 10px 4px;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 5px;
+    text-align: center;
+}
+
+form.FormCadastro input[type="submit"] {
+    margin: 20px auto;
+    background-color: #222;
+    border: 1px solid #111;
+    border-bottom: 2px solid #111;
+    height: 35px;
+    border-radius: 5px;
+    padding: 0 10px;
+    display: table;
+    color:#fff;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+}
