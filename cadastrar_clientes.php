@@ -10,9 +10,9 @@ if (isset($_POST['Cadastrar'])) {
     $values = ValidaPOST($values);
     if ($values['nome'] != "erro" && $values['senha'] != "erro" && $values['email'] != "erro" && $values['dtnasc'] != "erro" && $values['sexo'] != "erro" && $values['cpf'] != "erro") {
         $erros['inseriu'] = "ok";
-        $inserir_cliente = $pdo->prepare("INSERT INTO clientes (nome, dtnasc, sexo, cpf, email, senha, data_cadastro) VALUES (:nome, :dtnasc, :sexo, :cpf, :email, :senha, :data_cadastro)");
+        $inserir_cliente = $pdo->prepare("INSERT INTO clientes (cli_nome, cli_dtnasc, cli_sexo, cli_cpf, cli_email, cli_senha, cli_data_cadastro, cli_tipo) VALUES (:nome, :dtnasc, :sexo, :cpf, :email, :senha, :data_cadastro, :tipo)");
         //perguntar a diferença do bindValue para o array.
-        $parametros = array(":nome" => $values['nome'], ":dtnasc" => $values['dtnasc'], ":sexo" => $values['sexo'], ":cpf" => $values['cpf'], ":email" => $values['email'], ":senha" => Bcrypt::hash($values['senha']), ":data_cadastro" => date('c', time()));
+        $parametros = array(":nome" => $values['nome'], ":dtnasc" => $values['dtnasc'], ":sexo" => $values['sexo'], ":cpf" => $values['cpf'], ":email" => $values['email'], ":senha" => Bcrypt::hash($values['senha']), ":data_cadastro" => date('c', time()), ":tipo" => 0);
         $inserir_cliente->execute($parametros);
         $values = array("nome" => "", "senha" => "", "email" => "", "dtnasc" => "", "sexo" => "", "cpf" => "");
     }
@@ -20,16 +20,14 @@ if (isset($_POST['Cadastrar'])) {
 $pdo = null;
 ?>
 <?php include 'tema/cabecalho.php'; ?>
-<h1 class="TituloPagina">Cadastro de usuário</h1>
-<form class="FormCadastro" action="cadastrar_usuario.php" method="post">
+<h1 class="TituloPagina">Cadastro de clientes</h1>
+<form class="FormCadastro" action="cadastrar_clientes.php" method="post">
     <?php if ($erros['inseriu'] == "ok") { ?>
         <section class="MensagemSucesso">Você foi cadastrado com sucesso!</section>
     <?php } ?>
     <section class="Item">
         <input type="text" name="nome" value="<?=($values['nome'] != "erro" ? $values['nome'] : "" ) ?>" placeholder="Digite o seu nome..." />
-        <?php if ($values['nome'] == "erro") { ?>
-            <section class="Erro"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Preencha o nome!</section>
-        <?php } ?>
+        <?php ExibeErro($values['nome'], "Preencha o nome!"); ?>
     </section>
     <section class="Item">
         <input type="email" name="email" value="<?=($values['email'] != "erro" ? $values['email'] : "" ) ?>" placeholder="Digite o seu email..." />

@@ -11,7 +11,7 @@ form.FormCadastro {
     width: 100%;
     margin: 10px auto;
 }
-form.FormCadastro input[type="text"], form.FormCadastro input[type="password"], form.FormCadastro input[type="date"], form.FormCadastro input[type="email"] {
+form.FormCadastro input[type="text"], form.FormCadastro input[type="password"], form.FormCadastro input[type="date"], form.FormCadastro input[type="email"], form.FormCadastro select{
     box-sizing: border-box;
     width: 100%;
     padding: 0 10px;
@@ -37,7 +37,7 @@ form.FormCadastro section.Erro {
     text-align: center;
 }
 
-form.FormCadastro input[type="submit"] {
+form.FormCadastro input[type="submit"], form.FormCadastro button[type="submit"] {
     margin: 20px auto;
     background-color: #222;
     border: 1px solid #111;
@@ -50,4 +50,10 @@ form.FormCadastro input[type="submit"] {
     font-weight: bold;
     text-transform: uppercase;
     cursor: pointer;
+}
+form.FormCadastro .Carregando {
+    color: #009900;
+    margin: 5px 0;
+    text-align: center;
+    display: none;
 }
