@@ -36,14 +36,16 @@ class RomaneiosRepository {
             $comandoAtualiza = $pdo->prepare("UPDATE encomendas INNER JOIN itensromaneios ON encomendas.enc_id = itensromaneios.itr_idencomenda SET enc_controleromaneio = 0 WHERE itensromaneios.itr_idromaneio = :rom_id");
             $comandoAtualiza->bindValue(":rom_id", $id);
             $comandoAtualiza->execute();
-            $comando = $pdo->prepare("DELETE itensromaneios, romaneios FROM itensromaneios INNER JOIN romaneios WHERE itensromaneios.itr_idromaneio = romaneios.rom_id AND itensromaneios.itr_idromaneio = :id");
-            $comando->bindValue(":rom_id", $id);
-            $comando->execute();
+            $comandoItem = $pdo->prepare("DELETE itensromaneios FROM itensromaneios INNER JOIN romaneios WHERE itensromaneios.itr_idromaneio = romaneios.rom_id AND itensromaneios.itr_idromaneio = :rom_id");
+            $comandoItem->bindValue(":rom_id", $id);
+            $comandoItem->execute();
+            $comandoRom = $pdo->prepare("DELETE FROM romaneios WHERE rom_id = :rom_id");
+            $comandoRom->bindValue(":rom_id", $id);
+            $comandoRom->execute();
             $pdo = null;
             return true;
         } catch (Exception $ex) {
             $pdo = null;
-            die($ex);
             return false;
         }
     }

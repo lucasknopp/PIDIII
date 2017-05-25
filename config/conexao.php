@@ -10,6 +10,12 @@ function Conexao(){
     }
     return $pdo;
 }
-ob_start();
-session_start();
-?>
+
+function ConexaoDB(){
+    $pdo = new PDO("mysql:host=localhost;dbname=bancopid", "root", "");
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->exec("SET CHARACTER SET utf8");
+    return $pdo;
+}
+//ob_start();
+//session_start();
