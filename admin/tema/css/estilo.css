@@ -5,7 +5,10 @@
 body {
     margin: 0;
     padding: 0;
-    background-color: #555;
+    background-color: #021432;
+    background-image: url(../imagens/bg.png);
+    background-repeat: no-repeat;
+    background-position: top right;
 }
 
 section.Cabecalho {
@@ -107,8 +110,9 @@ section.Lateral ul li a {
 section.Conteudo {
     border-radius: 5px;
     margin: 80px 20px 20px 320px;
-    background-color: #fff;
+    background-color: rgba(255,255,255,0.95);
     padding: 10px;
+    max-width: 800px;
 }
 
 section.Conteudo section.Titulo {
@@ -500,7 +504,7 @@ section.Conteudo section.AlertCSS .ErroForm {
     font-weight: bold;
     font-size: 11px;
     text-transform: uppercase;
-    padding: 0px 10px;
+    padding: 0px 0px;
     display: block;
     border-radius: 5px;
     margin: 0px 2%;
@@ -535,7 +539,7 @@ section.Conteudo form.FormPadrao .Erro {
     font-weight: bold;
     font-size: 14px;
     line-height: 14px;
-    padding: 0 10px;
+    padding: 0 0px;
     margin: 0 0 10px;
 }
 section.Conteudo section.MensagemSucesso {

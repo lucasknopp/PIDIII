@@ -2,7 +2,6 @@
 require '../config/conexao.php';
 require '../config/funcoes.php';
 include '../config/Bcrypt.php';
-include 'validarCPF.php';
 $pdo = Conexao();
 $erros = array("inseriu" => "");
 $vercpf = true;

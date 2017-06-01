@@ -49,10 +49,10 @@ class Motoristas {
             $this->mensagem["mot_id"] = "Informe o campo id corretamente!";
         }
         if(trim($this->nome) == "") {
-            $this->mensagem["mot_nome"] = "Informe o campo nome corretamente!";
+            $this->mensagem["mot_nome"] = "Informe nome corretamente!";
         }
         if(trim($this->numhabilitacao) == "") {
-            $this->mensagem["mot_numhabilitacao"] = "Informe o campo numhabilitacao corretamente!";
+            $this->mensagem["mot_numhabilitacao"] = "Informe o número da habilitação!";
         }
     }
 

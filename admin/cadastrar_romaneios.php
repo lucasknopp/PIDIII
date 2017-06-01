@@ -10,7 +10,9 @@ require_once '../config/class/Itensromaneios.class.php';
 
 $ok = "";
 if (isset($_POST["cadastrar"])) {
-    $encomendasRomaneio = $_POST['encomendasRomaneio'];
+    if (isset($_POST['encomendasRomaneio'])) {
+        $encomendasRomaneio = $_POST['encomendasRomaneio'];
+    }
     $romaneios = new Romaneios(0, $_POST["rom_idorigem"], $_POST["rom_dtorigem"], $_POST["rom_iddestino"], 0, $_POST["rom_idmotorista"], $_POST["rom_idcaminhao"]);
     $romaneios->valida();
     $mensagem = $romaneios->getMensagem();
@@ -80,7 +82,7 @@ if (isset($_POST["cadastrar"])) {
             <?php
             $motoristas = new Motoristas();
             $motoristasRepository = new MotoristasRepository();
-            $motoristas = $motoristasRepository->listar();
+            $motoristas = $motoristasRepository->listarLivre();
             foreach ($motoristas as $valor) {
                 echo '<option value="' . $valor->getId() . '">' . $valor->getNome() . '</option>';
             }
@@ -94,7 +96,7 @@ if (isset($_POST["cadastrar"])) {
             <?php
             $veiculos = new Veiculos();
             $veiculosRepository = new VeiculosRepository();
-            $veiculos = $veiculosRepository->listar();
+            $veiculos = $veiculosRepository->listarLivre();
             foreach ($veiculos as $valor) {
                 echo '<option value="' . $valor->getId() . '">' . $valor->getNumplaca() . '</option>';
             }
@@ -113,6 +115,9 @@ if (isset($_POST["cadastrar"])) {
                     $cidadeRepository = new CidadeRepository();
                     $encomendasRepository = new EncomendasRepository();
                     $encomendas = $encomendasRepository->listar('0');
+                    if ($encomendas == null) {
+                        echo '<tr><td colspan="2">Nenhuma encomenda disponível para adicionar ao romaneio.</td></tr>';
+                    }
                     foreach ($encomendas as $valor) {
                         $cidade = $cidadeRepository->localizarId($valor->getCid_destino());
                         echo '<tr><td colspan="2"><input type="checkbox" value="' . $valor->getId() . '" name="encomendasRomaneio[]" /><b>Cod rastreio:</b> ' . $valor->getCodrastreio() . ' - <b>Cidade destino:</b> ' . $cidade->getNome() . '</td></tr>';
@@ -126,10 +131,10 @@ if (isset($_POST["cadastrar"])) {
         <button type="submit" name="cadastrar">Cadastrar romaneios</button>
     </section>
 </form>
-    <script type="text/javascript">
-$(function() {
-    $('input[name="rom_dtorigem"]').daterangepicker({
-        singleDatePicker: true,
+<script type="text/javascript">
+    $(function () {
+        $('input[name="rom_dtorigem"]').daterangepicker({
+            singleDatePicker: true,
             timePicker: true,
             pick12HourFormat: false,
             minDate: '<?php echo date("d/m/Y H:i"); ?>',
@@ -137,8 +142,8 @@ $(function() {
                 format: 'DD/MM/YYYY HH:mm'
                         // 2016-11-10T03:28:15+00:00
             }
+        });
     });
-});
 </script>
 <script>
     $('.Check tbody').find('tr').click(function () {
@@ -152,7 +157,7 @@ $(function() {
         checkAll.prop("checked", !checkAll.prop("checked"));
         if (checkAll.prop("checked")) {
             $('.Check tbody').find('tr').addClass('checked');
-        }else {
+        } else {
             $('.Check tbody').find('tr').removeClass('checked');
         }
     });

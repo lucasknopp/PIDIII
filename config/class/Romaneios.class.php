@@ -89,22 +89,24 @@ class Romaneios {
             $this->mensagem["rom_id"] = "Informe o campo id corretamente!";
         }
         if(trim($this->idorigem) == "") {
-            $this->mensagem["rom_idorigem"] = "Informe o campo unidade origem corretamente!";
+            $this->mensagem["rom_idorigem"] = "Informe a unidade de origem corretamente!";
         }
         if(trim($this->dtorigem) == "") {
-            $this->mensagem["rom_dtorigem"] = "Informe o campo data de sa„≠da corretamente!";
+            $this->mensagem["rom_dtorigem"] = "Informe a data de sa√≠da corretamente!";
+        }else if(validaDTMaiorTrue(date("d/m/Y H:i"), $this->dtorigem) == "1"){
+            $this->mensagem["rom_dtorigem"] = "Informe uma data de sa√≠da que ainda vai acontecer!";
         }
         if(trim($this->iddestino) == "") {
-            $this->mensagem["rom_iddestino"] = "Informe o campo unidade destino corretamente!";
+            $this->mensagem["rom_iddestino"] = "Informe a unidade de destino corretamente!";
         }
         if(trim($this->dtdestino) == "") {
-            $this->mensagem["rom_dtdestino"] = "Informe o campo data de chegada corretamente!";
+            $this->mensagem["rom_dtdestino"] = "Informe a data de chegada corretamente!";
         }
         if(trim($this->idmotorista) == "") {
-            $this->mensagem["rom_idmotorista"] = "Informe o campo motorista corretamente!";
+            $this->mensagem["rom_idmotorista"] = "Selecione o motorista corretamente!";
         }
         if(trim($this->idcaminhao) == "") {
-            $this->mensagem["rom_idcaminhao"] = "Informe o campo caminh„£o corretamente!";
+            $this->mensagem["rom_idcaminhao"] = "Selecione o caminh√£o corretamente!";
         }
     }
 

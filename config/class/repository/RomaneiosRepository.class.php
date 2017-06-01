@@ -90,7 +90,7 @@ class RomaneiosRepository {
     public function listarInner(){
         try{
             $pdo = ConexaoDB();
-            $comando = $pdo->prepare("SELECT R.*, C.nome AS CID1, C2.nome AS CID2 FROM romaneios R INNER JOIN cidade C ON R.rom_idorigem = C.id INNER JOIN cidade C2 ON R.rom_iddestino = C2.id");
+            $comando = $pdo->prepare("SELECT R.*, U1.uni_nome AS CID1, U2.uni_nome AS CID2 FROM romaneios R INNER JOIN unidades U1 ON R.rom_idorigem = U1.uni_id INNER JOIN unidades U2 ON R.rom_iddestino = U2.uni_id");
             $comando->execute();
             $romaneios = [];
             if($busca = $comando->fetchAll()){

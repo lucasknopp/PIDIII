@@ -74,5 +74,24 @@ class VeiculosRepository {
             return null;
         }
     }
+    
+    public function listarLivre(){
+        try{
+            $pdo = ConexaoDB();
+            $comando = $pdo->prepare("SELECT V.* FROM veiculos V INNER JOIN romaneios R ON R.rom_dtdestino != 0 OR R.rom_idcaminhao != V.vei_id");
+            $comando->execute();
+            $veiculos = [];
+            if($busca = $comando->fetchAll()){
+                foreach ($busca as $linha){
+                    $veiculos[] = new Veiculos($linha["vei_id"], $linha["vei_numplaca"]);
+                }
+            }
+            $pdo = null;
+            return $veiculos;
+        } catch (Exception $ex) {
+            $pdo = null;
+            return null;
+        }
+    }
 
 }

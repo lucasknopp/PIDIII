@@ -19,4 +19,14 @@
         <li><a href="cadastrar_romaneios.php">Gerar Romaneios</a></li>
         <li><a href="listar_romaneios.php">Listar/Editar/Excluir Romaneios</a></li>
     </ul>
+    <section class="NomeMenu">Motoristas</section>
+    <ul>
+        <li><a href="cadastrar_motoristas.php">Cadastrar Motoristas</a></li>
+        <li><a href="listar_motoristas.php">Listar/Editar/Excluir Romaneios</a></li>
+    </ul>
+    <section class="NomeMenu">Veículos</section>
+    <ul>
+        <li><a href="cadastrar_veiculos.php">Cadastrar Veículos</a></li>
+        <li><a href="listar_veiculos.php">Listar/Editar/Excluir Veículos</a></li>
+    </ul>
 </section>

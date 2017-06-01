@@ -1,5 +1,6 @@
 <?php
 $urlsite = "localhost/PIDIII";
+require_once 'validacao.php';
 function Conexao(){
     try{
         $pdo = new PDO("mysql:host=localhost;dbname=bancopid", "root", "");

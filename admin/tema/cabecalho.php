@@ -1,4 +1,5 @@
-<?php setlocale(LC_ALL, 'pt_BR'); date_default_timezone_set('America/Sao_Paulo'); ?>
+<?php setlocale(LC_ALL, 'pt_BR'); date_default_timezone_set('America/Sao_Paulo');
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
     <head>

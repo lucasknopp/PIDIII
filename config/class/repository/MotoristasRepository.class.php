@@ -75,5 +75,24 @@ class MotoristasRepository {
             return null;
         }
     }
+    
+    public function listarLivre(){
+        try{
+            $pdo = ConexaoDB();
+            $comando = $pdo->prepare("SELECT M.* FROM motoristas M INNER JOIN romaneios R ON R.rom_dtdestino != 0 OR R.rom_idmotorista != M.mot_id");
+            $comando->execute();
+            $motoristas = [];
+            if($busca = $comando->fetchAll()){
+                foreach ($busca as $linha){
+                    $motoristas[] = new Motoristas($linha["mot_id"], $linha["mot_nome"], $linha["mot_numhabilitacao"]);
+                }
+            }
+            $pdo = null;
+            return $motoristas;
+        } catch (Exception $ex) {
+            $pdo = null;
+            return null;
+        }
+    }
 
 }

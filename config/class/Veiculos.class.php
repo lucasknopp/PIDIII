@@ -39,7 +39,9 @@ class Veiculos {
             $this->mensagem["vei_id"] = "Informe o campo id corretamente!";
         }
         if(trim($this->numplaca) == "") {
-            $this->mensagem["vei_numplaca"] = "Informe o campo numplaca corretamente!";
+            $this->mensagem["vei_numplaca"] = "Informe o campo placa do veículo corretamente!";
+        }else if(validaPlacaVeiculo($this->numplaca) != "1"){
+            $this->mensagem["vei_numplaca"] = "Informe o número da placa corretamente!";
         }
     }
 
