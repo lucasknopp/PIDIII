@@ -7,6 +7,9 @@ $veiculos = $veiculosRepository->listar();
 ?>
 
 <section class="Titulo">Lista de veículos</section>
+<?php if(isset($_GET['red'])){
+   echo '<section class="MensagemVermelha">'. $_GET['red'] . '</section>';
+}?>
 <section class="Lista">
     <table>
         <thead><tr><td>Placa</td><td>Ações</td></tr></thead>

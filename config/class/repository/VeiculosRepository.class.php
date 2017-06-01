@@ -78,7 +78,7 @@ class VeiculosRepository {
     public function listarLivre(){
         try{
             $pdo = ConexaoDB();
-            $comando = $pdo->prepare("SELECT V.* FROM veiculos V INNER JOIN romaneios R ON R.rom_dtdestino != 0 OR R.rom_idcaminhao != V.vei_id");
+            $comando = $pdo->prepare("SELECT * FROM veiculos V WHERE NOT EXISTS (SELECT null FROM romaneios R WHERE R.rom_idcaminhao = V.vei_id AND R.rom_dtdestino = 0)");
             $comando->execute();
             $veiculos = [];
             if($busca = $comando->fetchAll()){
@@ -92,6 +92,8 @@ class VeiculosRepository {
             $pdo = null;
             return null;
         }
+        
+        
     }
 
 }

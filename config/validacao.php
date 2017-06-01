@@ -57,75 +57,75 @@ function validaCPF($cpf) {
     }
     $resto = $soma % 11;
 
-    $invalidos = array('00000000000','11111111111','22222222222','33333333333','44444444444','55555555555','66666666666','77777777777','88888888888','99999999999');
-    
-    if (in_array($cpf, $invalidos)){
+    $invalidos = array('00000000000', '11111111111', '22222222222', '33333333333', '44444444444', '55555555555', '66666666666', '77777777777', '88888888888', '99999999999');
+
+    if (in_array($cpf, $invalidos)) {
         return false;
     }
-    
+
     return $cpf{10} == ($resto < 2 ? 0 : 11 - $resto);
 }
 
-function validaDTHR($dataehora){ // valida data e hora no formato 24/05/2017 22:07
-    if(!empty($dataehora)){
+function validaDTHR($dataehora) { // valida data e hora no formato 24/05/2017 22:07
+    if (!empty($dataehora)) {
         $dataehora = trim($dataehora);
         $dataex = explode(" ", $dataehora);
         $data = $dataex[0];
         $hora = $dataex[1];
-        if(strlen($data) == "10" && strlen($hora) == "5"){
-           $dataex = explode("/", $data);
-           $dia = $dataex[0];
-           $mes = $dataex[1];
-           $ano = $dataex[2];
-           if(checkdate($mes, $dia, $ano) == "1"){
-               $dataex = explode(":", $hora);
-               $hora = $dataex[0];
-               $minutos = $dataex[1];
-               if($hora >= 00 && $hora <= 23 && $minutos >= 00 && $minutos <= 59){
-                   return true;
-               }
-           }
+        if (strlen($data) == "10" && strlen($hora) == "5") {
+            $dataex = explode("/", $data);
+            $dia = $dataex[0];
+            $mes = $dataex[1];
+            $ano = $dataex[2];
+            if (checkdate($mes, $dia, $ano) == "1") {
+                $dataex = explode(":", $hora);
+                $hora = $dataex[0];
+                $minutos = $dataex[1];
+                if ($hora >= 00 && $hora <= 23 && $minutos >= 00 && $minutos <= 59) {
+                    return true;
+                }
+            }
         }
     }
     return false;
 }
 
-function validaQuntCarac($frase, $quantidade){
-    if(!empty($frase) && !empty($quantidade)){
+function validaQuntCarac($frase, $quantidade) {
+    if (!empty($frase) && !empty($quantidade)) {
         $frase = trim($frase);
-        if(strlen(utf8_decode($frase)) <= $quantidade){
+        if (strlen(utf8_decode($frase)) <= $quantidade) {
             return true;
         }
-    }else{
+    } else {
         false;
-    } 
+    }
 }
 
-function validaIgualdade($valorum, $valordois){
-    if($valorum == $valordois){
+function validaIgualdade($valorum, $valordois) {
+    if ($valorum == $valordois) {
         return true;
     }
     return false;
 }
 
-function validaPlacaVeiculo($placa){
+function validaPlacaVeiculo($placa) {
     $valido = "/[a-zA-Z]{3}[0-9]{4}/";
-    if(!empty($placa) && strlen($placa) == "7"){
-        if ( preg_match( $valido, $placa ) == 1 ) {
-		return true;
-	}
+    if (!empty($placa) && strlen($placa) == "7") {
+        if (preg_match($valido, $placa) == 1) {
+            return true;
+        }
     }
     return false;
 }
 
-function inverteDT($data){
+function inverteDT($data) {
     $datainv = explode("/", $data);
-    $data = $datainv[2]."".$datainv[1]."".$datainv[0];
+    $data = $datainv[2] . "" . $datainv[1] . "" . $datainv[0];
     return $data;
 }
 
-function validaDTMaior($dataum, $datadois){ // 24/05/2017 22:07
-    if(!empty($dataum) && !empty($datadois)){
+function validaDTMaior($dataum, $datadois) { // 24/05/2017 22:07
+    if (!empty($dataum) && !empty($datadois)) {
         $dataex = explode(" ", $dataum);
         $auxdataum = $dataex[0];
         $auxhoraum = $dataex[1];
@@ -134,18 +134,18 @@ function validaDTMaior($dataum, $datadois){ // 24/05/2017 22:07
         $auxhoradois = $dataex[1];
         $auxdataum = inverteDT($auxdataum);
         $auxdatadois = inverteDT($auxdatadois);
-        if($auxdataum > $auxdatadois){
+        if ($auxdataum > $auxdatadois) {
             return $dataum;
-        }else if($auxdataum < $auxdatadois){
+        } else if ($auxdataum < $auxdatadois) {
             return $datadois;
-        }else if($auxdataum == $auxdatadois){
+        } else if ($auxdataum == $auxdatadois) {
             $auxhoraum = str_replace(":", "", $auxhoraum);
             $auxhoradois = str_replace(":", "", $auxhoradois);
-            if($auxhoraum > $auxhoradois){
+            if ($auxhoraum > $auxhoradois) {
                 return $dataum;
-            }else if($auxhoraum < $auxhoradois){
+            } else if ($auxhoraum < $auxhoradois) {
                 return $datadois;
-            }else{
+            } else {
                 return 1;
             }
         }
@@ -153,8 +153,8 @@ function validaDTMaior($dataum, $datadois){ // 24/05/2017 22:07
     return false;
 }
 
-function validaDTMaiorTrue($dataum, $datadois){ // 24/05/2017 22:07
-    if(!empty($dataum) && !empty($datadois)){
+function validaDTMaiorTrue($dataum, $datadois) { // 24/05/2017 22:07
+    if (!empty($dataum) && !empty($datadois)) {
         $dataex = explode(" ", $dataum);
         $auxdataum = $dataex[0];
         $auxhoraum = $dataex[1];
@@ -163,21 +163,32 @@ function validaDTMaiorTrue($dataum, $datadois){ // 24/05/2017 22:07
         $auxhoradois = $dataex[1];
         $auxdataum = inverteDT($auxdataum);
         $auxdatadois = inverteDT($auxdatadois);
-        if($auxdataum > $auxdatadois){
+        if ($auxdataum > $auxdatadois) {
             return false;
-        }else if($auxdataum < $auxdatadois){
+        } else if ($auxdataum < $auxdatadois) {
             return true;
-        }else if($auxdataum == $auxdatadois){
+        } else if ($auxdataum == $auxdatadois) {
             $auxhoraum = str_replace(":", "", $auxhoraum);
             $auxhoradois = str_replace(":", "", $auxhoradois);
-            if($auxhoraum > $auxhoradois){
+            if ($auxhoraum > $auxhoradois) {
                 return false;
-            }else if($auxhoraum < $auxhoradois){
+            } else if ($auxhoraum < $auxhoradois) {
                 return true;
             }
         }
     }
     return false;
+}
+
+function validaEmail($email) {
+    $conta = "^[a-zA-Z0-9\._-]+@";
+    $domino = "[a-zA-Z0-9\._-]+.";
+    $extensao = "([a-zA-Z]{2,4})$";
+    $pattern = $conta . $domino . $extensao;
+    if (ereg($pattern, $email))
+        return true;
+    else
+        return false;
 }
 
 $variavel1 = "25/06/2017 22:08";

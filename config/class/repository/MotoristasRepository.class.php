@@ -79,7 +79,7 @@ class MotoristasRepository {
     public function listarLivre(){
         try{
             $pdo = ConexaoDB();
-            $comando = $pdo->prepare("SELECT M.* FROM motoristas M INNER JOIN romaneios R ON R.rom_dtdestino != 0 OR R.rom_idmotorista != M.mot_id");
+            $comando = $pdo->prepare("SELECT * FROM motoristas M WHERE NOT EXISTS (SELECT null FROM romaneios R WHERE R.rom_idmotorista = M.mot_id AND R.rom_dtdestino = 0)");
             $comando->execute();
             $motoristas = [];
             if($busca = $comando->fetchAll()){

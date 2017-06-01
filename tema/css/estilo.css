@@ -93,11 +93,11 @@ section.Login section.Form section.Item button:hover {
 }
 
 section.MensagemVermelha {
-    color:#cc0033;
+    color:#fff;
     font-weight: bold;
-    display: table;
+    display: block;
+    font-size: 14px;
     text-align: center;
     text-transform: uppercase;
     text-decoration: none;
-    margin: 10px;
 }

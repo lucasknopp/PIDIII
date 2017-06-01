@@ -93,8 +93,8 @@ class Romaneios {
         }
         if(trim($this->dtorigem) == "") {
             $this->mensagem["rom_dtorigem"] = "Informe a data de saída corretamente!";
-        }else if(validaDTMaiorTrue(date("d/m/Y H:i"), $this->dtorigem) == "1"){
-            $this->mensagem["rom_dtorigem"] = "Informe uma data de saída que ainda vai acontecer!";
+        }else if(validaDTMaiorTrue($this->dtorigem, date("d/m/Y H:i")) == "1"){
+            $this->mensagem["rom_dtorigem"] = "Informe uma data valida para envio!";
         }
         if(trim($this->iddestino) == "") {
             $this->mensagem["rom_iddestino"] = "Informe a unidade de destino corretamente!";

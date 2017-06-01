@@ -79,5 +79,19 @@ $pdo = null;
         <button type="submit" name="Cadastrar" >Cadastrar</button>
     </section>
 </form>
+<script type="text/javascript">
+    $(function () {
+        $('input[name="rom_dtorigem"]').daterangepicker({
+            singleDatePicker: true,
+            timePicker: true,
+            pick12HourFormat: false,
+            minDate: '<?php echo date("d/m/Y H:i"); ?>',
+            locale: {
+                format: 'DD/MM/YYYY HH:mm'
+                        // 2016-11-10T03:28:15+00:00
+            }
+        });
+    });
+</script>
 <?php
 include 'tema/rodape.php';

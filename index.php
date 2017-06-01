@@ -1,4 +1,5 @@
 <?php
+require_once 'config/sessao.php';
 if (isset($_POST['Logar'])) {
     $usuario = $_POST['gnu'];
     $senha = $_POST['gns'];
@@ -7,6 +8,8 @@ if (isset($_POST['Logar'])) {
     foreach ($users as $pos => $valor) {
         if ($pos == $usuario && $valor == $senha) {
             $_SESSION['user'] = $usuario;
+            header("Location: admin");
+            exit;
         }
     }
 }

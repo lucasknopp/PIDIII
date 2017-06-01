@@ -7,12 +7,13 @@ require_once '../config/class/Veiculos.class.php';
 require_once '../config/class/Encomendas.class.php';
 require_once '../config/class/Cidade.class.php';
 require_once '../config/class/Itensromaneios.class.php';
-
+$urlvoltar = "listar_romaneios.php";
 $ok = "";
 if (isset($_GET['id']) && !empty($_GET['id'])) {
     $id = $_GET['id'];
     $romaneiosRepository = new RomaneiosRepository();
     $romaneios = $romaneiosRepository->localizarId($id);
+    if(!empty($romaneios)){
     if (validaDTMaiorTrue(date("d/m/Y H:i"), $romaneios->getDtorigem()) || $_SESSION['user'] == 'master') {
         if (isset($_POST["editar"])) {
             if (isset($_POST['encomendasRomaneio'])) {
@@ -20,8 +21,9 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             } else {
                 $itensEditar = [];
             }
-//        $dataChegada = $romaneios->getDtdestino();
-//        $romaneios = new Romaneios($id, $_POST["rom_idorigem"], $_POST["rom_dtorigem"], $_POST["rom_iddestino"], $dataChegada, $_POST["rom_idmotorista"], $_POST["rom_idcaminhao"]);
+            $dataChegada = $romaneios->getDtdestino();
+            $romaneios = new Romaneios($id, $_POST["rom_idorigem"], $_POST["rom_dtorigem"], $_POST["rom_iddestino"], $dataChegada, $_POST["rom_idmotorista"], $_POST["rom_idcaminhao"]);
+            $romaneiosRepository->gravar($romaneios);
             $itensRomRepository = new ItensromaneiosRepository();
             $itensRom = $itensRomRepository->listar($id);
             foreach ($itensRom as $valor) {
@@ -47,10 +49,15 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                     $itensRomRepository->gravar($regravarItem);
                 }
             }
+            $ok = "ok";
         }
     }else {
-        $urlvoltar = "listar_romaneios.php";
         header("Location: " . $urlvoltar . "?red=" . "Horário exedido para editar o romaneio!");
+        exit;
+    }
+    }else {
+        header("Location: " . $urlvoltar . "?red=" . "Romaneio não existe!");
+        exit;
     }
 }
 ?>

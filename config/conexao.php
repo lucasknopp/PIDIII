@@ -1,4 +1,9 @@
 <?php
+require_once 'sessao.php';
+if(!isset($_SESSION['user'])){
+    header("Location: ../");
+    exit;
+}
 $urlsite = "localhost/PIDIII";
 require_once 'validacao.php';
 function Conexao(){
