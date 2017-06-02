@@ -1,31 +1,41 @@
 <?php
+require '../config/conexao.php';
+require '../config/funcoes.php';
 require_once '../config/class/Clientes.class.php';
-require_once '../config/Bcrypt.php';
+include '../config/Bcrypt.php';
 
 $ok = "";
-if (isset($_POST['cadastrar'])) {
+
+if (isset($_GET['id'])) {
     if(isset($_POST["cli_sexo"])){
         $sexo = $_POST["cli_sexo"];
     }else{
         $sexo = "";
     }
-    $clientes = new Clientes(0, $_POST["cli_nome"], $_POST["cli_dtnasc"], $sexo, $_POST["cli_cpf"], $_POST["cli_email"], Bcrypt::hash($_POST["cli_senha"]), date("d/m/Y H:i"), 0);
-    $clientes->valida();
-    $mensagem = $clientes->getMensagem();
-    if (empty($mensagem)) {
-        $clientesRepository = new ClientesRepository();
-        $clientesRepository->gravar($clientes);
-        $clientes = new Clientes();
-        $ok = "ok";
+    $id = $_GET['id'];
+    $clientesRepository = new ClientesRepository();
+    $clientes = $clientesRepository->localizarId($id);
+    if (!empty($clientes)) {
+        if (isset($_POST["editar"])) {
+            $clientes = new Clientes($_GET['id'], $_POST["cli_nome"], $_POST["cli_dtbasc"], $sexo, $_POST["cli_cpf"], $_POST["cli_email"]);
+            $clientes->valida();
+            $mensagem = $clientes->getMensagem();
+            if (empty($mensagem)) {
+                $clientesRepository->gravar($clientes);
+                $ok = "ok";
+            }
+        }
+    } else {
+        header("Location: " . $urlvoltar . "?red=" . "Cliente não existe!");
+        exit;
     }
 }
-$clientes = new Clientes();
-$pdo = null;
+
 ?>
 <?php include 'tema/cabecalho.php'; ?>
-<section class="Titulo">Cadastro de Clientes</section>
+<section class="Titulo">Editar Cliente</section>
 <?php if ($ok == "ok") { ?>
-    <section class="MensagemVerde">Clientes adicionado com sucesso!</section>
+    <section class="MensagemVerde">Clientes atualizado com sucesso!</section>
 <?php } ?>
 <form action="" method="post" class="FormPadrao">
     <section class="Item">
@@ -49,11 +59,6 @@ $pdo = null;
         <?= (isset($mensagem["cli_email"]) ? '<section class="Erro">' . $mensagem["cli_email"] . "</section>" : "") ?>
     </section>
     <section class="Item">
-        <label>senha</label>
-        <input type="text" name="cli_senha" value="<?= $clientes->getSenha() ?>" placeholder="Digite um senha..."/>
-        <?= (isset($mensagem["cli_senha"]) ? '<section class="Erro">' . $mensagem["cli_senha"] . "</section>" : "") ?>
-    </section>
-    <section class="Item">
         <label>Sexo</label>
         <section class="Sexo">
             <input type="radio" <?php
@@ -71,22 +76,8 @@ $pdo = null;
     </section>    
 
     <section class="Item">
-        <button type="submit" name="cadastrar">Cadastrar clientes</button>
+        <button type="submit" name="editar">Atualizar cliente</button>
     </section>
 </form>
-<script type="text/javascript">
-    $(function () {
-        $('input[name="cli_dtnasc"]').daterangepicker({
-            singleDatePicker: true,
-            timePicker: true,
-            pick12HourFormat: false,
-            maxDate: '<?php echo date("d/m/Y"); ?>',
-            locale: {
-                format: 'DD/MM/YYYY'
-                        // 2016-11-10T03:28:15+00:00
-            }
-        });
-    });
-</script>
 <?php
 include 'tema/rodape.php';

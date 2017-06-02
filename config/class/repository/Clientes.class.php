@@ -117,12 +117,11 @@ class Clientes {
         if(trim($this->sexo) == "") {
             $this->mensagem["cli_sexo"] = "Informe o sexo do cliente!";
         }
-        $clientesRepository = new ClientesRepository();
         if(trim($this->cpf) == "") {
             $this->mensagem["cli_cpf"] = "Informe o campo cpf corretamente!";
         }else if(!validaCPF($this->cpf)){
             $this->mensagem["cli_cpf"] = "CPF informado invalido, informe um CPF valido!";
-        }else if(!$clientesRepository->localizaCPF($this->cpf)){
+        }else if(!ClientesRepository::localizaCPF($this->cpf)){
             $this->mensagem["cli_cpf"] = "CPF já existente dentro da base de dados!";
         }
         if(trim($this->email) == "") {

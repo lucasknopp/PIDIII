@@ -1,5 +1,11 @@
 <?php
 require_once 'config/sessao.php';
+
+if (isset($_SESSION['user'])) {
+    header("Location: admin");
+    exit;
+}
+
 if (isset($_POST['Logar'])) {
     $usuario = $_POST['gnu'];
     $senha = $_POST['gns'];
@@ -23,7 +29,7 @@ if (isset($_POST['Logar'])) {
     </head>
     <body>
         <section class="Login">
-            <img src="tema/imagens/globaltransportadora.png" alt=""/>
+            <img src="tema/imagens/globaltransportadora.png" width="160" alt=""/>
             <section class="Form">
                 <section class="Titulo">Área Restrita</section>
                 <form action="index.php" method="post">
@@ -49,7 +55,7 @@ if (isset($_POST['Logar'])) {
                     </section>
                 </form>
             </section>
-            <img src="tema/imagens/webconsutoria.png" alt=""/>
+            <img src="tema/imagens/webconsutoria.png" width="80" alt=""/>
         </section>
     </body>
 </html>

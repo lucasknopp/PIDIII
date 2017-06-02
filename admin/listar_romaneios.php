@@ -7,9 +7,11 @@ $romaneios = $romaneiosRepository->listarInner();
 ?>
 
 <section class="Titulo">Lista de romaneios</section>
-<?php if(isset($_GET['red'])){
-   echo '<section class="MensagemVermelha">'. $_GET['red'] . '</section>';
-}?>
+<?php
+if (isset($_GET['red'])) {
+    echo '<section class="MensagemVermelha">' . $_GET['red'] . '</section>';
+}
+?>
 <section class="Lista">
     <table>
         <thead><tr><td>Identificação</td><td>Ações</td></tr></thead>
@@ -22,7 +24,10 @@ $romaneios = $romaneiosRepository->listarInner();
                 if (validaDTMaiorTrue(date("d/m/Y H:i"), $valor->getDtorigem()) || $_SESSION['user'] == 'master') {
                     echo "<tr><td><b>Data:</b> " . $valor->getDtorigem() . " - <b>Destino:</b> " . $valor->getIddestino() . '</td><td><a style="background-color: #cc0033;color:#fff;border-color:#cc0033;" onclick="ExcluirLinhaRomaneios(' . $valor->getId() . ', \'Deseja realmente deletar o romaneio da <b>Data:</b> ' . $valor->getDtorigem() . ' - <b>Destino:</b> ' . $valor->getIdorigem() . '\')" href="javascript:void(0)">Excluir</a><a style="background-color: #E8702A;color:#fff;border-color:#E8702A;" href="editar_romaneios.php?id=' . $valor->getId() . '">Editar</a></td></tr>';
                 } else {
-                    echo "<tr><td><b>Data:</b> " . $valor->getDtorigem() . " - <b>Destino:</b> " . $valor->getIddestino() . '</td><td>Horário exedido!</td></tr>';
+                    if ($valor->getDtdestino() == 0)
+                        echo "<tr><td><b>Data:</b> " . $valor->getDtorigem() . " - <b>Destino:</b> " . $valor->getIddestino() . '</td><td>Horário excedido!</td></tr>';
+                    else
+                        echo "<tr><td><b>Data:</b> " . $valor->getDtorigem() . " - <b>Destino:</b> " . $valor->getIddestino() . '</td><td><a style="background-color: #009933;color:#fff;border-color:#009933;" href="detalhes_romaneios.php?id=' . $valor->getId() . '">Concluído!</a></td></tr>';
                 }
             }
             ?>

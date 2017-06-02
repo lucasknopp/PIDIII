@@ -90,7 +90,7 @@ class RomaneiosRepository {
     public function listarInner(){
         try{
             $pdo = ConexaoDB();
-            $comando = $pdo->prepare("SELECT R.*, U1.uni_nome AS CID1, U2.uni_nome AS CID2 FROM romaneios R INNER JOIN unidades U1 ON R.rom_idorigem = U1.uni_id INNER JOIN unidades U2 ON R.rom_iddestino = U2.uni_id");
+            $comando = $pdo->prepare("SELECT R.*, U1.uni_nome AS CID1, U2.uni_nome AS CID2 FROM romaneios R INNER JOIN unidades U1 ON R.rom_idorigem = U1.uni_id INNER JOIN unidades U2 ON R.rom_iddestino = U2.uni_id ORDER BY R.rom_dtorigem DESC");
             $comando->execute();
             $romaneios = [];
             if($busca = $comando->fetchAll()){
@@ -109,7 +109,7 @@ class RomaneiosRepository {
     public function listarViagem(){
         try{
             $pdo = ConexaoDB();
-            $comando = $pdo->prepare("SELECT R.*, U1.uni_nome AS CID1, U2.uni_nome AS CID2 FROM romaneios R INNER JOIN unidades U1 ON R.rom_idorigem = U1.uni_id INNER JOIN unidades U2 ON R.rom_iddestino = U2.uni_id WHERE R.rom_dtdestino = 0 AND R.rom_dtorigem < :data_atual");
+            $comando = $pdo->prepare("SELECT R.*, U1.uni_nome AS CID1, U2.uni_nome AS CID2 FROM romaneios R INNER JOIN unidades U1 ON R.rom_idorigem = U1.uni_id INNER JOIN unidades U2 ON R.rom_iddestino = U2.uni_id WHERE R.rom_dtdestino = 0 AND R.rom_dtorigem <= :data_atual");
             $comando->bindValue(':data_atual', date("d/m/Y H:i"));
             $comando->execute();
             $romaneios = [];

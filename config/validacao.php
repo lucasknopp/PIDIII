@@ -153,6 +153,33 @@ function validaDTMaior($dataum, $datadois) { // 24/05/2017 22:07
     return false;
 }
 
+function validaDTMaiorTrueIgual($dataum, $datadois) { // 24/05/2017 22:07
+    if (!empty($dataum) && !empty($datadois)) {
+        $dataex = explode(" ", $dataum);
+        $auxdataum = $dataex[0];
+        $auxhoraum = $dataex[1];
+        $dataex = explode(" ", $datadois);
+        $auxdatadois = $dataex[0];
+        $auxhoradois = $dataex[1];
+        $auxdataum = inverteDT($auxdataum);
+        $auxdatadois = inverteDT($auxdatadois);
+        if ($auxdataum > $auxdatadois) {
+            return false;
+        } else if ($auxdataum <= $auxdatadois) {
+            return true;
+        } else if ($auxdataum == $auxdatadois) {
+            $auxhoraum = str_replace(":", "", $auxhoraum);
+            $auxhoradois = str_replace(":", "", $auxhoradois);
+            if ($auxhoraum > $auxhoradois) {
+                return false;
+            } else if ($auxhoraum <= $auxhoradois) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 function validaDTMaiorTrue($dataum, $datadois) { // 24/05/2017 22:07
     if (!empty($dataum) && !empty($datadois)) {
         $dataex = explode(" ", $dataum);
@@ -190,6 +217,25 @@ function validaEmail($email) {
     else
         return false;
 }
+
+
+function GeraCodEnc($id) {
+    $quant = 12;
+    $Caracteres = 'ABCDEFGHIJKLMOPQRSTUVXWYZ0123456789';
+    $QuantidadeCaracteres = strlen($Caracteres);
+    $QuantidadeCaracteres--;
+
+    $Hash = "GT".$id;
+    $quant = $quant - strlen($Hash);
+    
+    for ($x = 1; $x <= $quant; $x++) {
+        $Posicao = rand(0, $QuantidadeCaracteres);
+        $Hash .= substr($Caracteres, $Posicao, 1);
+    }
+
+    return $Hash;
+}
+
 
 $variavel1 = "25/06/2017 22:08";
 $variavel2 = "25/06/2017 22:07";

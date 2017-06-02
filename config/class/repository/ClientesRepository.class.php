@@ -81,5 +81,23 @@ class ClientesRepository {
             return null;
         }
     }
+    
+    public function localizaCPF($cpf){
+        try{
+            $pdo = ConexaoDB();
+            $comando = $pdo->prepare("SELECT * FROM clientes WHERE cli_cpf = :cpf");
+            $comando->bindValue(":cpf", $cpf);
+            $comando->execute();
+            if($comando->rowCount() == 0){
+                return true;
+            }else{
+                return false;
+            }
+            $pdo = null;
+        } catch (Exception $ex) {
+            $pdo = null;
+            return null;
+        }
+    }
 
 }

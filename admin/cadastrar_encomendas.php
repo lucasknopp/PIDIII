@@ -46,6 +46,11 @@ if (isset($_POST['CadastrarEncomenda'])) {
         $parametros[':enc_bairro_destino'] = $values['enc_bairro_destino'];
         $parametros[':enc_data'] = date('c', time());
         if ($inserir_encomendas->execute($parametros)) {
+            $ultimoID = $pdo->lastInsertId();
+            $update_cod = $pdo->prepare("UPDATE encomendas SET enc_codrastreio = :enc_codrastreio WHERE enc_id = :enc_id");
+            $atupar[':enc_codrastreio'] = GeraCodEnc($ultimoID);
+            $atupar[':enc_id'] = $ultimoID;
+            $update_cod->execute($atupar);
             $values = array("enc_cod_unidade" => "", "enc_estado" => "", "cli_cod" => "", "enc_destin_nome" => "", "enc_end_destino" => "", "enc_numend_destino" => "", "enc_bairro_destino" => "", "enc_cid_destino" => "", "enc_cep_destino" => "", "busca_nome" => "");
             $ok = "ok";
         } else {

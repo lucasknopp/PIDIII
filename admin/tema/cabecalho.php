@@ -13,11 +13,10 @@ if (!isset($_SESSION['user'])) {
         <meta charset="UTF-8">
         <title>Admin 1.0</title>
         <link href="tema/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
-
+        <script src="tema/js/jquery.min.js" type="text/javascript"></script>
         <script src="tema/js/scripts.js" type="text/javascript"></script>
         <link href="tema/css/estilo.css" rel="stylesheet" type="text/css"/>
         <link href="tema/css/bootstrap.css" rel="stylesheet" type="text/css"/>
-        <script src="tema/js/jquery.min.js" type="text/javascript"></script>
         <script src="tema/js/moment.min.js" type="text/javascript"></script>
         <script src="tema/js/daterangepicker.js" type="text/javascript"></script>
         <link href="tema/css/daterangepicker.css" rel="stylesheet" type="text/css"/>
@@ -35,5 +34,5 @@ if (!isset($_SESSION['user'])) {
                 <a href="sair.php"><i class="fa fa-sign-out" aria-hidden="true"></i></a>
             </section>
         </section>
-<?php include 'lateral.php'; ?>
+        <?php include 'lateral.php'; ?>
         <section class="Conteudo">

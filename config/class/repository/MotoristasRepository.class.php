@@ -94,5 +94,28 @@ class MotoristasRepository {
             return null;
         }
     }
+    
+    public function listarIndisponivel(){
+        try{
+            $pdo = ConexaoDB();
+            $comando = $pdo->prepare("SELECT * FROM motoristas M LEFT OUTER JOIN romaneios R ON R.rom_idmotorista = M.mot_id AND R.rom_dtdestino = 0");
+            $comando->execute();
+            $motoristas = [];
+            if($busca = $comando->fetchAll()){
+                foreach ($busca as $linha){
+                    if(isset($linha["rom_dtdestino"]) == 0){
+                    $motoristas[] = new Motoristas($linha["mot_id"], $linha["mot_nome"], $linha["mot_numhabilitacao"]);
+                    }else {
+                        $motoristas[] = new Motoristas($linha["mot_id"], $linha["mot_nome"], "em viagem");
+                    }
+                }
+            }
+            $pdo = null;
+            return $motoristas;
+        } catch (Exception $ex) {
+            $pdo = null;
+            return null;
+        }
+    }
 
 }

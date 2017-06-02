@@ -1,5 +1,8 @@
 $(document).ready(function(){
     $(".ExcluirLinha").height($(".ExcluirLinha .ECaixa").height()+12).css("margin-top", -(($(".ExcluirLinha .ECaixa").height()/2)+6));
+    
+    var altura = $(window).height();
+    //$(".Conteudo").css("min-height", (altura - 120) + "px");
 });
 
 function LimpaAlert() {

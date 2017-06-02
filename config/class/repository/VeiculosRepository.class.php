@@ -91,9 +91,30 @@ class VeiculosRepository {
         } catch (Exception $ex) {
             $pdo = null;
             return null;
-        }
-        
-        
+        }  
+    }
+    
+    public function listarIndisponivel(){
+         try{
+            $pdo = ConexaoDB();
+            $comando = $pdo->prepare("SELECT * FROM veiculos V LEFT OUTER JOIN romaneios R ON R.rom_idcaminhao = V.vei_id AND R.rom_dtdestino = 0");
+            $comando->execute();
+            $veiculos = [];
+            if($busca = $comando->fetchAll()){
+                foreach ($busca as $linha){
+                    if(isset($linha["rom_dtdestino"]) == 0){
+                        $veiculos[] = new Veiculos($linha["vei_id"], $linha["vei_numplaca"]);
+                    }else {
+                        $veiculos[] = new Veiculos("em viagem", $linha["vei_numplaca"]);
+                    }
+                }
+            }
+            $pdo = null;
+            return $veiculos;
+        } catch (Exception $ex) {
+            $pdo = null;
+            return null;
+        }  
     }
 
 }
