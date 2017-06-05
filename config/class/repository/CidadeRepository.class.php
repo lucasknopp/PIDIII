@@ -75,5 +75,25 @@ class CidadeRepository {
             return null;
         }
     }
+    
+    public function listarPorEstado($estado){
+        try{
+            $pdo = ConexaoDB();
+            $comando = $pdo->prepare("SELECT * FROM cidade WHERE estado = :estado");
+            $comando->bindValue(':estado', $estado);
+            $comando->execute();
+            $cidade = [];
+            if($busca = $comando->fetchAll()){
+                foreach ($busca as $linha){
+                    $cidade[] = array("id" => $linha["id"],"nome" => $linha["nome"], "estado" => $linha["estado"]);
+                }
+            }
+            $pdo = null;
+            return $cidade;
+        } catch (Exception $ex) {
+            $pdo = null;
+            return null;
+        }
+    }
 
 }

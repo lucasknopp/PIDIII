@@ -104,7 +104,7 @@ class Clientes {
         return $this->mensagem;
     }
 
-    public function valida() {
+    public function valida($tipo = 0) {
         if(trim($this->id) == "") {
             $this->mensagem["cli_id"] = "Informe o campo id corretamente!";
         }
@@ -122,7 +122,7 @@ class Clientes {
             $this->mensagem["cli_cpf"] = "Informe o campo cpf corretamente!";
         }else if(!validaCPF($this->cpf)){
             $this->mensagem["cli_cpf"] = "CPF informado invalido, informe um CPF valido!";
-        }else if(!$clientesRepository->localizaCPF($this->cpf)){
+        }else if(!$clientesRepository->localizaCPF($this->cpf) && $tipo == 0){
             $this->mensagem["cli_cpf"] = "CPF já existente dentro da base de dados!";
         }
         if(trim($this->email) == "") {

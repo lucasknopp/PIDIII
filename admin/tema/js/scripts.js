@@ -24,3 +24,11 @@ function ExcluirLinhaMotoristas(id, texto){
 function ExcluirLinhaVeiculos(id, texto){
     $(".Alertas").html('<section class="ExcluirLinha"><section class="ECaixa"><section class="TituloCaixa">'+texto+'</section><section class="Botoes"><a class="CV" style="background: #bb0022;" href="excluir_linha_veiculos.php?id='+id+'">Excluir</a><a class="CA" style="background: #ddaa00;" href="javascript:void(0)" onclick="LimpaAlert()">Cancelar</a></section></section></section><section class="preto60"></section>');
 }
+
+function ExcluirLinhaUnidades(id, texto){
+    $(".Alertas").html('<section class="ExcluirLinha"><section class="ECaixa"><section class="TituloCaixa">'+texto+'</section><section class="Botoes"><a class="CV" style="background: #bb0022;" href="excluir_linha_unidades.php?id='+id+'">Excluir</a><a class="CA" style="background: #ddaa00;" href="javascript:void(0)" onclick="LimpaAlert()">Cancelar</a></section></section></section><section class="preto60"></section>');
+}
+
+function ExcluirLinhaClientes(id, texto){
+    $(".Alertas").html('<section class="ExcluirLinha"><section class="ECaixa"><section class="TituloCaixa">'+texto+'</section><section class="Botoes"><a class="CV" style="background: #bb0022;" href="excluir_linha_clientes.php?id='+id+'">Excluir</a><a class="CA" style="background: #ddaa00;" href="javascript:void(0)" onclick="LimpaAlert()">Cancelar</a></section></section></section><section class="preto60"></section>');
+}

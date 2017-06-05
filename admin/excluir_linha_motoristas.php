@@ -6,7 +6,7 @@ if (isset($_GET['id'])) {
     $id = $_GET['id'];
     $motoristasRepository = new MotoristasRepository();
     $motoristas = $motoristasRepository->excluir($id);
-    header("Location: " . $urlvoltar . "?m=" . $id);
+    header("Location: " . $urlvoltar);
 } else {
     header("Location: " . $urlvoltar);
 }

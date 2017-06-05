@@ -3,20 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/xampp/htdocs/PIDIII/admin/listar_motoristas.php</file>
-            <file>file:/C:/xampp/htdocs/PIDIII/tema/css/estilo.css</file>
-            <file>file:/C:/xampp/htdocs/PIDIII/admin/listar_veiculos.php</file>
-            <file>file:/C:/xampp/htdocs/PIDIII/admin/tema/js/scripts.js</file>
-            <file>file:/C:/xampp/htdocs/PIDIII/admin/tema/lateral.php</file>
-            <file>file:/C:/xampp/htdocs/PIDIII/admin/listar_romaneios_viagem.php</file>
-            <file>file:/C:/xampp/htdocs/PIDIII/index.php</file>
-            <file>file:/C:/xampp/htdocs/PIDIII/config/class/repository/MotoristasRepository.class.php</file>
-            <file>file:/C:/xampp/htdocs/PIDIII/config/class/repository/VeiculosRepository.class.php</file>
-            <file>file:/C:/xampp/htdocs/PIDIII/admin/tema/cabecalho.php</file>
-            <file>file:/C:/xampp/htdocs/PIDIII/config/class/Romaneios.class.php</file>
-            <file>file:/C:/xampp/htdocs/PIDIII/admin/listar_romaneios.php</file>
-            <file>file:/C:/xampp/htdocs/PIDIII/admin/detalhes_romaneios.php</file>
-            <file>file:/C:/xampp/htdocs/PIDIII/admin/concluir_romaneios.php</file>
+            <file>file:/C:/xampp/htdocs/PIDIII/admin/editar_unidades.php</file>
+            <file>file:/C:/xampp/htdocs/PIDIII/admin/cidades.ajax.php</file>
+            <file>file:/C:/xampp/htdocs/PIDIII/admin/cadastrar_unidades.php</file>
         </group>
     </open-files>
 </project-private>

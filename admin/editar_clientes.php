@@ -1,100 +1,109 @@
 <?php
-require '../config/conexao.php';
-require '../config/funcoes.php';
+require_once '../config/class/Clientes.class.php';
 include '../config/Bcrypt.php';
-$pdo = Conexao();
-$erros = array("inseriu" => "");
-$vercpf = true;
-$values = array("nome" => "", "senha" => "", "email" => "", "dtnasc" => "", "sexo" => "", "cpf" => "");
 
-if(isset($_GET['id'])){
-    $sql = "SELECT cli_nome, cli_senha, cli_dtnasc, cli_sexo, cli_email, cli_cpf FROM clientes WHERE cli_id = :id";
-    $select_cliente = $pdo->prepare($sql);
-    $parametros['id'] = $_GET['id'];
-    $select_cliente->execute($parametros);
-    $linha = $select_cliente->fetchAll();
-    $values['nome'] = $linha[0]['cli_nome'];
-    $values['senha'] = $linha[0]['cli_senha'];
-    $values['dtnasc'] = $linha[0]['cli_dtnasc'];
-    $values['sexo'] = $linha[0]['cli_sexo'];
-    $values['cpf'] = $linha[0]['cli_cpf'];
-    $values['email'] = $linha[0]['cli_email'];
-}
-
-if (isset($_POST['Cadastrar']) && isset($_GET['id'])) {
-    $values = ValidaPOST($values);
-    $vercpf = validaCPF($values['cpf']);
-    if ($values['nome'] != "erro" && $values['senha'] != "erro" && $values['email'] != "erro" && $values['dtnasc'] != "erro" && $values['sexo'] != "erro" && $values['cpf'] != "erro" && $vercpf == true) {
-        $erros['inseriu'] = "ok";
-        $inserir_cliente = $pdo->prepare("UPDATE clientes SET cli_nome = :nome, cli_dtnasc = :dtnasc, cli_sexo = :sexo, cli_cpf = :cpf, cli_email = :email, cli_senha = :senha WHERE cli_id = :id");
-        //perguntar a diferença do bindValue para o array.
-        if($values['senha'] != $linha[0]['cli_senha'])
-        {
-            $values['senha'] = Bcrypt::hash($values['senha']);
+$ok = "";
+$urlvoltar = "listar_clientes.php";
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+    $clientesRepository = new ClientesRepository();
+    $clientes = $clientesRepository->localizarId($id);
+    if (!empty($clientes)) {
+        if (isset($_POST['editar'])) {
+            if (isset($_POST["cli_sexo"])) {
+                $sexo = $_POST["cli_sexo"];
+            } else {
+                $sexo = "";
+            }
+            $senha = $_POST["cli_senha"];
+            if ($senha != "") {
+                $senha = Bcrypt::hash($senha);
+            } else {
+                $senha = $clientes->getSenha();
+            }
+            $clientes = new Clientes($id, $_POST["cli_nome"], $_POST["cli_dtnasc"], $sexo, $_POST["cli_cpf"], $_POST["cli_email"], $senha, date("d/m/Y H:i"), 0);
+            $clientes->valida(1);
+            $mensagem = $clientes->getMensagem();
+            if (empty($mensagem)) {
+                $clientesRepository = new ClientesRepository();
+                $clientesRepository->gravar($clientes);
+                $ok = "ok";
+            }
         }
-        $parametros = array(":nome" => $values['nome'], ":id" => $_GET['id'], ":dtnasc" => $values['dtnasc'], ":sexo" => $values['sexo'], ":cpf" => $values['cpf'], ":email" => $values['email'], ":senha" => $values['senha']);
-        $inserir_cliente->execute($parametros);
+    } else {
+        header("Location: " . $urlvoltar . "?red=" . "Cliente não existe!");
+        exit;
     }
+} else {
+    header("Location: " . $urlvoltar . "?red=" . "Cliente não existe!");
+    exit;
 }
-$pdo = null;
 ?>
 <?php include 'tema/cabecalho.php'; ?>
-<section class="Titulo">Editar cliente</section>
-<form class="FormPadrao" method="post">
-    <?php if ($erros['inseriu'] == "ok") { ?>
-        <section class="MensagemVerde">Cliente atualizado com sucesso!</section>
-    <?php } ?>
+<section class="Titulo">Editar Cliente</section>
+<?php if ($ok == "ok") { ?>
+    <section class="MensagemVerde">Clientes atualizado com sucesso!</section>
+<?php } ?>
+<form action="" method="post" class="FormPadrao">
     <section class="Item">
-        <input type="text" name="nome" value="<?= ($values['nome'] != "erro" ? $values['nome'] : "" ) ?>" placeholder="Digite o seu nome..." />
-        <?php ExibeErro($values['nome'], "Preencha o nome!"); ?>
+        <label>nome</label>
+        <input type="text" name="cli_nome" value="<?= $clientes->getNome() ?>" placeholder="Digite um nome..."/>
+        <?= (isset($mensagem["cli_nome"]) ? '<section class="Erro">' . $mensagem["cli_nome"] . "</section>" : "") ?>
     </section>
     <section class="Item">
-        <input type="email" name="email" value="<?= ($values['email'] != "erro" ? $values['email'] : "" ) ?>" placeholder="Digite o seu email..." />
-        <?php if ($values['email'] == "erro") { ?>
-            <section class="Erro"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Preencha o e-mail!</section>
-        <?php } ?>
+        <label>Data de Nascimento</label>
+        <input type="text" name="cli_dtnasc" value="<?= $clientes->getDtnasc() ?>" placeholder="Digite a data de nascimento..."/>
+        <?= (isset($mensagem["cli_dtnasc"]) ? '<section class="Erro">' . $mensagem["cli_dtnasc"] . "</section>" : "") ?>
     </section>
     <section class="Item">
-        <input type="password" name="senha" value="<?= ($values['senha'] != "erro" ? $values['senha'] : "" ) ?>" placeholder="Digite a sua senha..." />
-        <?php if ($values['senha'] == "erro") { ?>
-            <section class="Erro"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Preencha a senha!</section>
-        <?php } ?>
+        <label>cpf</label>
+        <input type="text" name="cli_cpf" value="<?= $clientes->getCPF() ?>" placeholder="Digite um cpf..."/>
+        <?= (isset($mensagem["cli_cpf"]) ? '<section class="Erro">' . $mensagem["cli_cpf"] . "</section>" : "") ?>
     </section>
     <section class="Item">
-        <input type="date" name="dtnasc" value="<?= ($values['dtnasc'] != "erro" ? $values['dtnasc'] : "" ) ?>" placeholder="Digite a data de nascimento..." />
-        <?php if ($values['dtnasc'] == "erro") { ?>
-            <section class="Erro"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Preencha a data de nascimento!</section>
-        <?php } ?>
+        <label>email</label>
+        <input type="text" name="cli_email" value="<?= $clientes->getEmail() ?>" placeholder="Digite um email..."/>
+        <?= (isset($mensagem["cli_email"]) ? '<section class="Erro">' . $mensagem["cli_email"] . "</section>" : "") ?>
     </section>
     <section class="Item">
-        <input type="text" name="cpf" value="<?= ($values['cpf'] != "erro" ? $values['cpf'] : "" ) ?>" placeholder="Digite o seu cpf..." />
-        <?php if ($values['cpf'] == "erro") { ?>
-            <section class="Erro"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Preencha o cpf!</section>
-        <?php } ?>
-        <?php if ($vercpf != true) { ?>
-            <section class="Erro"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> CPF invalido!</section>
-        <?php } ?>
+        <label>Nova senha <b style="color: #d9534f">(DEIXE VAZIO PARA NÃO ALTERAR)</b></label>
+        <input type="password" name="cli_senha" value="" placeholder="Digite uma nova senha..."/>
+        <?= (isset($mensagem["cli_senha"]) ? '<section class="Erro">' . $mensagem["cli_senha"] . "</section>" : "") ?>
     </section>
     <section class="Item">
+        <label>Sexo</label>
         <section class="Sexo">
             <input type="radio" <?php
-            if ($values['sexo'] == "M") {
+            if ($clientes->getSexo() == "M") {
                 echo "checked";
             }
-            ?> name="sexo" id="S_Masculino" value="M"/><label for="S_Masculino">Masculino</label> 
+            ?> name="cli_sexo" id="S_Masculino" value="M"/><label for="S_Masculino">Masculino</label> 
             <input type="radio" <?php
-            if ($values['sexo'] == "F") {
+            if ($clientes->getSexo() == "F") {
                 echo "checked";
             }
-            ?> name="sexo" id="S_Feminino" value="F"/><label for="S_Feminino">Feminino</label> 
+            ?> name="cli_sexo" id="S_Feminino" value="F"/><label for="S_Feminino">Feminino</label> 
         </section>
-        <?php if ($values['sexo'] == "erro") { ?>
-            <section class="Erro"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Selecione o sexo!</section>
-        <?php } ?>
-    </section>
+        <?= (isset($mensagem["cli_sexo"]) ? '<section class="Erro">' . $mensagem["cli_sexo"] . "</section>" : "") ?>
+    </section>    
+
     <section class="Item">
-        <button type="submit" name="Cadastrar" >Editar</button>
+        <button type="submit" name="editar">Atualizar cliente</button>
     </section>
 </form>
+<script type="text/javascript">
+    $(function () {
+        $('input[name="cli_dtnasc"]').daterangepicker({
+            singleDatePicker: true,
+            timePicker: true,
+            pick12HourFormat: false,
+            maxDate: '<?php echo date("d/m/Y"); ?>',
+            locale: {
+                format: 'DD/MM/YYYY'
+                        // 2016-11-10T03:28:15+00:00
+            }
+        });
+    });
+</script>
 <?php
 include 'tema/rodape.php';

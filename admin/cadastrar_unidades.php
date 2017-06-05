@@ -1,124 +1,116 @@
 <?php
-require '../config/conexao.php';
-require '../config/funcoes.php';
-$pdo = Conexao();
+include 'tema/cabecalho.php';
+require_once '../config/class/Unidades.class.php';
+require_once '../config/class/Estado.class.php';
+
 $ok = "";
-
-$select_estados = $pdo->prepare("SELECT id, nome FROM estado ORDER BY nome");
-$select_estados->execute();
-$linha_estados = $select_estados->fetchAll();
-
-$values = array("uni_nome" => "", "uni_endereco" => "", "uni_numero" => "", "uni_bairro" => "", "uni_estado" => "", "uni_tipo" => "", "uni_cidade" => "");
-if (isset($_POST['cadastrar_unidade'])) {
-    $values = ValidaPOST($values);
-    if($values['uni_cidade'] != "erro"){
-        $RestauraCITY = $values['uni_cidade'];
-    }else {
-        $RestauraCITY = -1;
-    }
-    if (VerificaArray($values)) {
-        $inserir_unidades = $pdo->prepare("INSERT INTO unidades (uni_nome, uni_endereco, uni_numero, uni_bairro, uni_cidade, uni_tipo) VALUES (:uni_nome, :uni_endereco, :uni_numero, :uni_bairro, :uni_cidade, :uni_tipo)");
-        $parametros = array(":uni_nome" => $values['uni_nome'], ":uni_endereco" => $values['uni_endereco'], ":uni_numero" => $values['uni_numero'], ":uni_bairro" => $values['uni_bairro'], ":uni_cidade" => $values['uni_cidade'], ":uni_tipo" => $values['uni_tipo']);
-        $inserir_unidades->execute($parametros);
+$estado = "";
+$unidades = new Unidades();
+if (isset($_POST["cadastrar"])) {
+    $estado = $_POST['uni_estado'];
+    $unidades = new Unidades(0, $_POST["uni_nome"], $_POST["uni_endereco"], $_POST["uni_numero"], $_POST["uni_bairro"], $_POST["uni_cidade"], $_POST["uni_tipo"]);
+    $unidades->valida();
+    $mensagem = $unidades->getMensagem();
+    if (empty($mensagem)) {
+        $unidadesRepository = new UnidadesRepository();
+        $unidadesRepository->gravar($unidades);
+        $unidades = new Unidades();
         $ok = "ok";
     }
 }
-
-include 'tema/cabecalho.php';
 ?>
-
 <section class="Titulo">Cadastro de Unidades</section>
-
-<form class="FormPadrao" action="cadastrar_unidades.php" method="post">
-    <?php if ($ok == "ok") { ?>
-    <section class="MensagemVerde">Unidade cadastrada com sucesso!</section>
+<?php if ($ok == "ok") { ?>
+    <section class="MensagemVerde">Unidades adicionado com sucesso!</section>
 <?php } ?>
+<form action="" method="post" class="FormPadrao">
     <section class="Item">
         <label>Nome da Unidade</label>
-        <input type="text" name="uni_nome" placeholder="Digite nome da unidade..." value="<?php MantemValor($values['uni_nome']); ?>" />
-        <?php ExibeErro($values['uni_nome'], "Preencha o nome."); ?>
+        <input type="text" name="uni_nome" value="<?= $unidades->getNome(); ?>" placeholder="Digite o nome..."/>
+        <?= (isset($mensagem["uni_nome"]) ? '<section class="Erro">' . $mensagem["uni_nome"] . "</section>" : "") ?>
     </section>
     <section class="Item">
         <label>Endereço</label>
-        <input type="text" name="uni_endereco" placeholder="Digite o endereço..." value="<?php MantemValor($values['uni_endereco']); ?>" />
-        <?php ExibeErro($values['uni_endereco'], "Preencha o endereço."); ?>
+        <input type="text" name="uni_endereco" value="<?= $unidades->getEndereco(); ?>" placeholder="Digite o endereço..."/>
+        <?= (isset($mensagem["uni_endereco"]) ? '<section class="Erro">' . $mensagem["uni_endereco"] . "</section>" : "") ?>
     </section>
     <section class="Item">
         <label>Número</label>
-        <input type="text" name="uni_numero" placeholder="Digite um número..." value="<?php MantemValor($values['uni_numero']); ?>" />
-        <?php ExibeErro($values['uni_numero'], "Preencha o número."); ?>
+        <input type="text" name="uni_numero" value="<?= $unidades->getNumero(); ?>" placeholder="Digite o número..."/>
+        <?= (isset($mensagem["uni_numero"]) ? '<section class="Erro">' . $mensagem["uni_numero"] . "</section>" : "") ?>
     </section>
     <section class="Item">
         <label>Bairro</label>
-        <input type="text" name="uni_bairro" placeholder="Digite um bairro..." value="<?php MantemValor($values['uni_bairro']); ?>" />
-        <?php ExibeErro($values['uni_bairro'], "Preencha o bairro."); ?>
+        <input type="text" name="uni_bairro" value="<?= $unidades->getBairro(); ?>" placeholder="Digite o bairro..."/>
+        <?= (isset($mensagem["uni_bairro"]) ? '<section class="Erro">' . $mensagem["uni_bairro"] . "</section>" : "") ?>
     </section>
     <section class="Item">
-        <label>Selecione um estado</label>
+        <label>Estado</label>
         <select id="SelecionarEstado" name="uni_estado">
-            <option value=""></option>
+            <option value="">Selecione um estado...</option>
             <?php
-            foreach ($linha_estados as $value) {
-                if ($values['uni_estado'] == $value['id']) {
-                    echo '<option selected="" value="' . $value['id'] . '">' . $value['nome'] . '</option>';
-                } else {
-                    echo '<option value="' . $value['id'] . '">' . $value['nome'] . '</option>';
-                }
+            $estadoRepository = new EstadoRepository();
+            $estados = $estadoRepository->listar();
+            foreach ($estados as $valor) {
+                if ($estado == $valor->getId())
+                    echo '<option selected value="' . $valor->getId() . '">' . $valor->getNome() . '</option>';
+                else
+                    echo '<option value="' . $valor->getId() . '">' . $valor->getNome() . '</option>';
             }
             ?>
         </select>
-        <?php ExibeErro($values['uni_estado'], "Selecione um estado."); ?>
+        <?= (isset($mensagem["uni_cidade"]) ? '<section class="Erro">' . $mensagem["uni_cidade"] . "</section>" : "") ?>
     </section>
     <section class="Item">
-        <label>Selecione uma cidade</label>
+        <label>Cidade</label>
         <select id="SelecionarCidade" name="uni_cidade">
-            <option value="">Escolha um estado...</option>
+            <option value="">Primeiro selecione um estado...</option>
         </select>
         <section class="Carregando">carregando cidades...</section>
-        <?php ExibeErro($values['uni_cidade'], "Selecione uma cidade."); ?>
+        <?= (isset($mensagem["uni_cidade"]) ? '<section class="Erro">' . $mensagem["uni_cidade"] . "</section>" : "") ?>
     </section>
     <section class="Item">
         <label>Tipo</label>
         <select name="uni_tipo">
-            <option value="1" <?= ($values['uni_tipo'] == "1" ? "selected=\"\"" : "" ) ?>>Filial</option>
-            <option value="2" <?= ($values['uni_tipo'] == "2" ? "selected=\"\"" : "" ) ?>>Matriz</option>
+            <option <?= $unidades->getTipo() == "1" ? "selected" : "" ?> value="1">Filial</option>
+            <option <?= $unidades->getTipo() == "2" ? "selected" : "" ?> value="2">Matriz</option>
         </select>
-        <?php ExibeErro($values['uni_tipo'], "Selecione o tipo."); ?>
+        <?= (isset($mensagem["uni_tipo"]) ? '<section class="Erro">' . $mensagem["uni_tipo"] . "</section>" : "") ?>
     </section>
+
     <section class="Item">
-        <button type="submit" name="cadastrar_unidade">Cadastrar unidade</button>
+        <button type="submit" name="cadastrar">Cadastrar unidades</button>
     </section>
 </form>
-
 <script>
-    $(function () {
-<?= ($values['uni_cidade'] != "" ? "AjaxCidades($('#SelecionarEstado'),  " .$RestauraCITY. ");\n" : "" ) ?>
-        $('#SelecionarEstado').change(function () {
-            AjaxCidades(this, -1);
+    $(document).ready(function () {
+        <?= ($unidades->getCidade() != "" ? "CarregarCidades($('#SelecionarEstado'),  " . $unidades->getCidade() . ");\n" : "" ) ?>
+        $("#SelecionarEstado").change(function () {
+            CarregarCidades(this, 0);
         });
     });
 
-    function AjaxCidades(campoUF, CidCOD) {
-        if ($(campoUF).val()) {
-            $('#SelecionarCidade').hide();
-            $('.Carregando').show();
-            $.getJSON('cidades.ajax.php?search=', {cod_estados: $(campoUF).val(), ajax: 'true'}, function (j) {
-                var options = '<option value=""></option>';
+    function CarregarCidades(SelEstado, SelCid) {
+        var estado = $(SelEstado).val();
+        if (estado != "") {
+            $("#SelecionarCidade").hide();
+            $(".Carregando").show();
+            $.getJSON('cidades.ajax.php', {estado: estado}, function (j) {
+                var imprime = '<option value="">Selecione uma cidade...</option>';
                 for (var i = 0; i < j.length; i++) {
-                    if (CidCOD == j[i].cod_cidades) {
-                        options += '<option selected="" value="' + j[i].cod_cidades + '">' + j[i].nome + '</option>';
-                    } else {
-                        options += '<option value="' + j[i].cod_cidades + '">' + j[i].nome + '</option>';
-                    }
+                    if (SelCid == j[i].id)
+                        imprime += '<option selected value="' + j[i].id + '">' + j[i].nome + '</option>';
+                    else
+                        imprime += '<option value="' + j[i].id + '">' + j[i].nome + '</option>';
                 }
-                $('#SelecionarCidade').html(options).show();
-                $('.Carregando').hide();
+                $(".Carregando").hide();
+                $("#SelecionarCidade").html(imprime).show();
             });
         } else {
-            $('#SelecionarCidade').html('<option value="">Escolha um estado...</option>');
+            var imprime = '<option value="">Primeiro selecione um estado...</option>';
+            $("#SelecionarCidade").html(imprime);
         }
     }
 </script>
-
 <?php
 include 'tema/rodape.php';
