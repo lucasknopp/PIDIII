@@ -555,13 +555,35 @@ section.Conteudo form.FormPadrao .ExibeClientes label {
     margin: 0 10px 0 0;
     font-size: 14px;
     font-weight: bold;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    line-height: 35px;
+    padding: 0 0 0 25px;
+}
+section.Conteudo form.FormPadrao .ExibeClientes {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 8px;
 }
 section.Conteudo form.FormPadrao .itemUser {
     display: block;
     overflow: hidden;
     position: relative;
-    padding: 6px 0;
+    padding: 10px 0;
+    background-color: #fff;
     border-bottom: 1px dotted #ccc;
+}
+section.Conteudo form.FormPadrao .itemUser:hover {
+    background-color: #f2f2f2;
+    cursor: pointer;
+}
+section.Conteudo form.FormPadrao .itemUser * {
+    cursor: pointer;
 }
 
 section.Conteudo .ItemForms input[type="text"], section.Conteudo .ItemForms input[type="email"], section.Conteudo .ItemForms input[type="date"], section.Conteudo .ItemForms input[type="search"] {

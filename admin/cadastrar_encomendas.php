@@ -1,78 +1,45 @@
 <?php
 include 'tema/cabecalho.php';
-require '../config/conexao.php';
-require '../config/funcoes.php';
-
-$pdo = Conexao();
-
-$select_unidades = $pdo->prepare("SELECT uni_id, uni_nome FROM unidades ORDER BY uni_nome");
-$select_unidades->execute();
-$linha_unidades = $select_unidades->fetchAll();
-
-$select_cidades = $pdo->prepare("SELECT id, nome FROM cidade ORDER BY nome");
-$select_cidades->execute();
-$linha_cidades = $select_cidades->fetchAll();
-
-$select_estados = $pdo->prepare("SELECT id, nome FROM estado ORDER BY nome");
-$select_estados->execute();
-$linha_estados = $select_estados->fetchAll();
-
+require_once '../config/class/Encomendas.class.php';
+require_once '../config/class/Unidades.class.php';
+require_once '../config/class/Estado.class.php';
 $ok = "";
-$RestauraCITY = -1;
-$RestauraUSER = -1;
-$values = array("enc_cod_unidade" => "", "enc_estado" => "", "cli_cod" => "", "enc_destin_nome" => "", "enc_end_destino" => "", "enc_numend_destino" => "", "enc_bairro_destino" => "", "enc_cid_destino" => "", "enc_cep_destino" => "", "busca_nome" => "");
-
+$selEstado = "";
+$encomenda = new Encomendas();
+$busca = "";
 if (isset($_POST['CadastrarEncomenda'])) {
-    $values = ValidaPOST($values);
-    if ($values['cli_cod'] != "erro") {
-        $RestauraUSER = $values['cli_cod'];
+    $busca = $_POST['busca_nome'];
+    if (isset($_POST['enc_cod_cliente'])) {
+        $clicod = $_POST['enc_cod_cliente'];
     } else {
-        $RestauraUSER = -1;
+        $clicod = "";
     }
-    if ($values['enc_cid_destino'] != "erro") {
-        $RestauraCITY = $values['enc_cid_destino'];
-    } else {
-        $RestauraCITY = -1;
-    }
-    if (VerificaArray($values)) {
-        $inserir_encomendas = $pdo->prepare("INSERT INTO encomendas (enc_cod_cliente, enc_destin_nome, enc_cid_destino, enc_end_destino, enc_numend_destino, enc_cod_unidade, enc_data, enc_bairro_destino, enc_cep_destino) VALUES (:enc_cod_cliente, :enc_destin_nome, :enc_cid_destino, :enc_end_destino, :enc_numend_destino, :enc_cod_unidade, :enc_data, :enc_bairro_destino, :enc_cep_destino)");
-        $parametros[':enc_cod_cliente'] = $values['cli_cod'];
-        $parametros[':enc_destin_nome'] = $values['enc_destin_nome'];
-        $parametros[':enc_cid_destino'] = $values['enc_cid_destino'];
-        $parametros[':enc_end_destino'] = $values['enc_end_destino'];
-        $parametros[':enc_numend_destino'] = $values['enc_numend_destino'];
-        $parametros[':enc_cod_unidade'] = $values['enc_cod_unidade'];
-        $parametros[':enc_cep_destino'] = $values['enc_cep_destino'];
-        $parametros[':enc_bairro_destino'] = $values['enc_bairro_destino'];
-        $parametros[':enc_data'] = date('c', time());
-        if ($inserir_encomendas->execute($parametros)) {
-            $ultimoID = $pdo->lastInsertId();
-            $update_cod = $pdo->prepare("UPDATE encomendas SET enc_codrastreio = :enc_codrastreio WHERE enc_id = :enc_id");
-            $atupar[':enc_codrastreio'] = GeraCodEnc($ultimoID);
-            $atupar[':enc_id'] = $ultimoID;
-            $update_cod->execute($atupar);
-            $values = array("enc_cod_unidade" => "", "enc_estado" => "", "cli_cod" => "", "enc_destin_nome" => "", "enc_end_destino" => "", "enc_numend_destino" => "", "enc_bairro_destino" => "", "enc_cid_destino" => "", "enc_cep_destino" => "", "busca_nome" => "");
-            $ok = "ok";
-        } else {
-            $ok = "falhou";
-        }
+    $selEstado = $_POST['enc_estado'];
+    $encomenda = new Encomendas(0, $clicod, $_POST['enc_destin_nome'], $_POST['enc_cid_destino'], $_POST['enc_end_destino'], $_POST['enc_numend_destino'], $_POST['enc_cod_unidade'], date("d/m/Y H:i"), $_POST['enc_bairro_destino'], $_POST['enc_cep_destino'], 0, 0);
+    $encomenda->valida();
+    $mensagem = $encomenda->getMensagem();
+    if (empty($mensagem)) {
+        $encomendasRepository = new EncomendasRepository();
+        $encomendasRepository->gravar($encomenda);
+        $encomenda->setCodrastreio(GeraCodEnc($encomenda->getId()));
+        $encomendasRepository->gravar($encomenda);
+        $ok = "ok";
+        $encomenda = new Encomendas();
+        $selEstado = "";
+        $clicod = "";
+        $busca = "";
     }
 }
-
-$pdo = null;
 ?>
 <section class="Titulo">Cadastro de encomendas</section>
 <?php if ($ok == "ok") { ?>
-    <section class="MensagemVerde">Encomenda cadastrada com sucesso!</section>
-<?php } else if ($ok == "falhou") { ?>
-    <section class="MensagemVermelha">OPS! Ocorreu um erro ao cadastrar a encomenda!</section>
+    <section class="MensagemVerde">Encomenda adicionada com sucesso!</section>
 <?php } ?>
 
-<form action="cadastrar_encomendas.php" method="post" class="FormPadrao">
+<form action="" method="post" class="FormPadrao">
     <section class="ItemForms">
         <label>Buscar cliente</label>
-        <input type="search" class="BuscaCliente" name="busca_nome" placeholder="Digite o nome do cliente..." value="<?php MantemValor($values['busca_nome']); ?>" />
-        <?php ExibeErro($values['busca_nome'], "Preencha a busca corretamente!"); ?>
+        <input type="search" class="BuscaCliente" name="busca_nome" placeholder="Digite o nome do cliente..." value="<?= $busca ?>" />
     </section>
 
     <section class="Oculto" style="display: none;">
@@ -81,71 +48,77 @@ $pdo = null;
 
         </section>
         <section class="Carregando">carregando clientes...</section>
-        <?php ExibeErro($values['cli_cod'], "Selecione um cliente!"); ?>
+        <?= (isset($mensagem["enc_cod_cliente"]) ? '<section class="Erro">' . $mensagem["enc_cod_cliente"] . "</section>" : "") ?>
         <section class="Item">
             <label>Selecione a unidade</label>
             <select name="enc_cod_unidade">
                 <option value="">Selecione uma unidade...</option>
                 <?php
-                foreach ($linha_unidades as $valor) {
-                    if ($valor['uni_id'] == $values['enc_cod_unidade']) {
-                        echo '<option selected="" value="' . $valor['uni_id'] . '">' . $valor['uni_nome'] . '</option>';
+                $unidades = new Unidades();
+                $unidadeRepository = new UnidadesRepository();
+                $unidades = $unidadeRepository->listar();
+                foreach ($unidades as $valor) {
+                    if ($valor->getId() == $encomenda->getCod_unidade()) {
+                        echo '<option selected="" value="' . $valor->getId() . '">' . $valor->getNome() . '</option>';
                     } else {
-                        echo '<option value="' . $valor['uni_id'] . '">' . $valor['uni_nome'] . '</option>';
+                        echo '<option value="' . $valor->getId() . '">' . $valor->getNome() . '</option>';
                     }
                 }
                 ?>
             </select>
-            <?php ExibeErro($values['enc_cod_unidade'], "Selecione uma unidade!"); ?>
+            <?= (isset($mensagem["enc_cod_unidade"]) ? '<section class="Erro">' . $mensagem["enc_cod_unidade"] . "</section>" : "") ?>
         </section>
         <section class="Item">
             <label>Nome do destinatário</label>
-            <input type="text" name="enc_destin_nome" value="<?php MantemValor($values['enc_destin_nome']); ?>" placeholder="Digite o nome do destinatário..."/>
-            <?php ExibeErro($values['enc_destin_nome'], "Preencha o nome do destinatário!"); ?>
+            <input type="text" name="enc_destin_nome" value="<?= $encomenda->getDestin_nome() ?>" placeholder="Digite o nome do destinatário..."/>
+            <?= (isset($mensagem["enc_destin_nome"]) ? '<section class="Erro">' . $mensagem["enc_destin_nome"] . "</section>" : "") ?>
         </section>
         <section class="Item">
             <label>Endereço</label>
-            <input type="text" name="enc_end_destino" value="<?php MantemValor($values['enc_end_destino']); ?>" placeholder="Digite o endereço do destinatário..."/>
-            <?php ExibeErro($values['enc_end_destino'], "Preencha o endereço do destinatário!"); ?>
+            <input type="text" name="enc_end_destino" value="<?= $encomenda->getEnd_destino() ?>" placeholder="Digite o endereço do destinatário..."/>
+            <?= (isset($mensagem["enc_end_destino"]) ? '<section class="Erro">' . $mensagem["enc_end_destino"] . "</section>" : "") ?>
         </section>
         <section class="Item">
             <label>Número</label>
-            <input type="text" name="enc_numend_destino" value="<?php MantemValor($values['enc_numend_destino']); ?>" placeholder="Digite o número do destinatário..."/>
-            <?php ExibeErro($values['enc_numend_destino'], "Preencha o número do destinatário!"); ?>
+            <input type="text" name="enc_numend_destino" value="<?= $encomenda->getNumend_destino() ?>" placeholder="Digite o número do destinatário..."/>
+            <?= (isset($mensagem["enc_numend_destino"]) ? '<section class="Erro">' . $mensagem["enc_numend_destino"] . "</section>" : "") ?>
         </section>
         <section class="Item">
             <label>Bairro</label>
-            <input type="text" name="enc_bairro_destino" value="<?php MantemValor($values['enc_bairro_destino']); ?>" placeholder="Digite o bairro do destinatário..."/>
-            <?php ExibeErro($values['enc_bairro_destino'], "Preencha o bairro do destinatário!"); ?>
+            <input type="text" name="enc_bairro_destino" value="<?= $encomenda->getBairro_destino() ?>" placeholder="Digite o bairro do destinatário..."/>
+            <?= (isset($mensagem["enc_bairro_destino"]) ? '<section class="Erro">' . $mensagem["enc_bairro_destino"] . "</section>" : "") ?>
         </section>
         <section class="Item">
             <label>Selecione um estado</label>
             <select id="SelecionarEstado" name="enc_estado">
-                <option value=""></option>
+                <option value="">Selecione um estado...</option>
                 <?php
-                foreach ($linha_estados as $value) {
-                    if ($values['enc_estado'] == $value['id']) {
-                        echo '<option selected="" value="' . $value['id'] . '">' . $value['nome'] . '</option>';
+                $estado = new Estado();
+                $estadoRepository = new EstadoRepository();
+                $estado = $estadoRepository->listar();
+                foreach ($estado as $valor) {
+                    if ($valor->getId() == $selEstado) {
+                        echo '<option selected="" value="' . $valor->getId() . '">' . $valor->getNome() . '</option>';
                     } else {
-                        echo '<option value="' . $value['id'] . '">' . $value['nome'] . '</option>';
+                        echo '<option value="' . $valor->getId() . '">' . $valor->getNome() . '</option>';
                     }
                 }
                 ?>
             </select>
-            <?php ExibeErro($values['enc_estado'], "Selecione um estado."); ?>
+            <?= (isset($mensagem["enc_estado"]) ? '<section class="Erro">' . $mensagem["enc_estado"] . "</section>" : "") ?>
         </section>
         <section class="Item">
             <label>Selecione uma cidade</label>
             <select id="SelecionarCidade" name="enc_cid_destino">
-                <option value="">Escolha um estado...</option>
+                <option value="">Primeiro selecione um estado...</option>
             </select>
             <section class="Carregando">carregando cidades...</section>
-            <?php ExibeErro($values['enc_cid_destino'], "Selecione uma cidade."); ?>
+            <?= (isset($mensagem["enc_cid_destino"]) ? '<section class="Erro">' . $mensagem["enc_cid_destino"] . "</section>" : "") ?>
         </section>
         <section class="Item">
             <label>CEP</label>
-            <input type="text" name="enc_cep_destino" value="<?php MantemValor($values['enc_cep_destino']); ?>" placeholder="Digite o CEP do destinatário..."/>
-            <?php ExibeErro($values['enc_cep_destino'], "Preencha o CEP do destinatário!"); ?>
+            <input type="text" name="enc_cep_destino" value="<?= $encomenda->getCep_destino() ?>" placeholder="Digite o CEP do destinatário..."/>
+            <?= (isset($mensagem["enc_cep_destino"]) ? '<section class="Erro">' . $mensagem["enc_cep_destino"] . "</section>" : "") ?>
         </section>
         <section class="Item">
             <button type="submit" name="CadastrarEncomenda" >Cadastrar encomenda</button>
@@ -156,29 +129,29 @@ $pdo = null;
 <script>
     $(function () {
         $('.BuscaCliente').keyup(function () {
-            AjaxClientes(this, -1);
+            AjaxClientes(this, 0);
         });
         $('#SelecionarEstado').change(function () {
-            AjaxCidades(this, -1);
+            CarregarCidades(this, 0);
         });
     });
 
     $(document).ready(function () {
-<?= ($values['busca_nome'] != "" ? "AjaxClientes($('.BuscaCliente'),  " . $RestauraUSER . ");\n" : "" ) ?>
-<?= ($values['enc_cid_destino'] != "" ? "AjaxCidades($('#SelecionarEstado'),  " . $RestauraCITY . ");\n" : "" ) ?>
+<?= ($busca != "" ? "AjaxClientes($('.BuscaCliente'),  '" . $encomenda->getCod_cliente() . "');\n" : "" ) ?>
+<?= ($encomenda->getCid_destino() != "" ? "CarregarCidades($('#SelecionarEstado'),  '" . $encomenda->getCid_destino() . "');\n" : "" ) ?>
     });
 
     function AjaxClientes(nomeUser, UserCOD) {
         if ($(nomeUser).val()) {
             $('.ExibeClientes').hide();
             $('.Carregando').show();
-            $.getJSON('clientes.ajax.php?search=', {nome_user: $(nomeUser).val(), ajax: 'true'}, function (j) {
+            $.getJSON('clientes.ajax.php', {nome_user: $(nomeUser).val()}, function (j) {
                 var options = '';
                 for (var i = 0; i < j.length; i++) {
                     if (UserCOD == j[i].cod_cliente) {
-                        options += '<section class="itemUser"><input checked="" type="radio" name="cli_cod" id="cli_' + j[i].nome + '" value="' + j[i].cod_cliente + '"/><label for="cli_' + j[i].nome + '">' + j[i].nome + ' - ' + j[i].cpf + '</label></section>';
+                        options += '<section class="itemUser"><input checked="" type="radio" name="enc_cod_cliente" id="cli_' + j[i].nome + '" value="' + j[i].cod_cliente + '"/><label for="cli_' + j[i].nome + '">' + j[i].nome + ' - ' + j[i].cpf + '</label></section>';
                     } else {
-                        options += '<section class="itemUser"><input type="radio" name="cli_cod" id="cli_' + j[i].nome + '" value="' + j[i].cod_cliente + '"/><label for="cli_' + j[i].nome + '">' + j[i].nome + ' - ' + j[i].cpf + '</label></section>';
+                        options += '<section class="itemUser"><input type="radio" name="enc_cod_cliente" id="cli_' + j[i].nome + '" value="' + j[i].cod_cliente + '"/><label for="cli_' + j[i].nome + '">' + j[i].nome + ' - ' + j[i].cpf + '</label></section>';
                     }
                 }
                 if (i > 0) {
@@ -195,24 +168,25 @@ $pdo = null;
         }
     }
 
-    function AjaxCidades(campoUF, CidCOD) {
-        if ($(campoUF).val()) {
-            $('#SelecionarCidade').hide();
-            $('.Carregando').show();
-            $.getJSON('cidades.ajax.php?search=', {cod_estados: $(campoUF).val(), ajax: 'true'}, function (j) {
-                var options = '<option value=""></option>';
+    function CarregarCidades(SelEstado, SelCid) {
+        var estado = $(SelEstado).val();
+        if (estado != "") {
+            $("#SelecionarCidade").hide();
+            $(".Carregando").show();
+            $.getJSON('cidades.ajax.php', {estado: estado}, function (j) {
+                var imprime = '<option value="">Selecione uma cidade...</option>';
                 for (var i = 0; i < j.length; i++) {
-                    if (CidCOD == j[i].cod_cidades) {
-                        options += '<option selected="" value="' + j[i].cod_cidades + '">' + j[i].nome + '</option>';
-                    } else {
-                        options += '<option value="' + j[i].cod_cidades + '">' + j[i].nome + '</option>';
-                    }
+                    if (SelCid == j[i].id)
+                        imprime += '<option selected value="' + j[i].id + '">' + j[i].nome + '</option>';
+                    else
+                        imprime += '<option value="' + j[i].id + '">' + j[i].nome + '</option>';
                 }
-                $('#SelecionarCidade').html(options).show();
-                $('.Carregando').hide();
+                $(".Carregando").hide();
+                $("#SelecionarCidade").html(imprime).show();
             });
         } else {
-            $('#SelecionarCidade').html('<option value="">Escolha um estado...</option>');
+            var imprime = '<option value="">Primeiro selecione um estado...</option>';
+            $("#SelecionarCidade").html(imprime);
         }
     }
 </script>

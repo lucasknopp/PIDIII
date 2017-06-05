@@ -102,5 +102,25 @@ class ClientesRepository {
             return null;
         }
     }
+    
+    public function listarPorNome($nome){
+        try{
+            $pdo = ConexaoDB();
+            $comando = $pdo->prepare("SELECT * FROM clientes WHERE cli_nome LIKE :cli_nome ORDER BY cli_nome");
+            $comando->bindValue(':cli_nome', '%'.$nome.'%');
+            $comando->execute();
+            $clientes = [];
+            if($busca = $comando->fetchAll()){
+                foreach ($busca as $linha){
+                    $clientes[] = array('cod_cliente' => $linha['cli_id'], 'nome' => $linha['cli_nome'], 'cpf' => $linha['cli_cpf']);
+                }
+            }
+            $pdo = null;
+            return $clientes;
+        } catch (Exception $ex) {
+            $pdo = null;
+            return null;
+        }
+    }
 
 }
